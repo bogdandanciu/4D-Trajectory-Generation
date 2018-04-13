@@ -1,6 +1,6 @@
 # 4D-Trajectory-Generation
 
-Tool for generation and visualization of 4D trajectories between any two airports in the world. 
+Tool for generation and visualization of 4D trajectories (latitude, longitude, altitude, speed) between any two airports in the world. Based on the performance model of an Airbus A320 (variable speeds and vertical rates of change), and the orthodromic distance between the airports, an optimal cruise flight level is determined and the flight profile is then generated.
 
 ## Trajectory 
 
@@ -10,7 +10,7 @@ The horizontal part of the trajectory is generated as an orthodrome between the 
 ![orthodrome](https://user-images.githubusercontent.com/28689295/38273040-9ba684ca-3793-11e8-99bc-c54885818317.png)
 
 
-The vertical profile is generated using the performance model of an Airbus A320. Using the orthodrome distance between the chosen airports and assuming a minimum cruise time of 15 minutes an optimal cruise level is then determined together with the variable speeds and vertical rates of change for each leg of the flight profile.   
+The vertical profile is generated using the performance model of an Airbus A320. Using the orthodromic distance between the chosen airports and assuming a minimum cruise time of 15 minutes an optimal cruise level is then determined together with the variable speeds and vertical rates of change for each leg of the flight profile.   
 
 ![a320 performance](https://user-images.githubusercontent.com/28689295/38273978-0cc2c338-3796-11e8-8fcc-b4c063eb12ac.JPG)
 
