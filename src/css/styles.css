@@ -1,0 +1,592 @@
+﻿#wrapper {
+    width: 98%;
+    height: 95vh;
+    border: 1px solid black;
+    overflow: auto;
+    position: absolute;
+}
+
+.leftInputStyle {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    border-radius: 5px;
+}
+
+#first {
+    width: 15%;
+    float: left;
+    background-color: #95a5a6;
+    height: 89.7vh;
+    white-space: nowrap;
+}
+
+#container {
+    width: 70%;
+    float: left;
+    overflow: auto;
+}
+
+#second {
+    width: 15%;
+    float: left;
+    background-color: #95a5a6;
+    height: 89.7vh;
+}
+
+#googleMap {
+    width: 100%;
+    height: 55vh;
+    float: left;
+    border: 1px solid red;
+}
+
+#tester {
+    width: 100%;
+    height: 34.7vh;
+    border: 1px solid green;
+    overflow: hidden;
+}
+
+#menu {
+    height: 5vh;
+}
+
+/*imported*/
+div#header {
+    width: 100%;
+    height: 30px;
+    background-color: #2c3e50;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.logo {
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+    .logo a {
+        font-size: 1.3em;
+        color: #fff;
+    }
+
+        .logo a span {
+            font-weight: 300;
+        }
+
+/* General button style (reset) */
+.btn {
+    border: none;
+    font-family: inherit;
+    font-size: 16px;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+    padding: 2px 2px;
+    display: inline-block;
+    margin: 5px 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 70;
+    outline: none;
+    position: relative;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+    .btn:after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+    }
+
+/* Pseudo elements for icons */
+
+.icon-cog:before {
+    font-family: FontAwesome;
+    content: "\f072";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+}
+
+.icon-clock:before {
+    font-family: FontAwesome;
+    content: "\f017";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+}
+
+.icon-loc:before {
+    font-family: FontAwesome;
+    content: "\f041";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+}
+
+/* Button 3 */
+.btn-3 {
+    background: #fcad26;
+    color: #fff;
+    width: 95%;
+}
+
+    .btn-3:hover {
+        background: #f29e0d;
+    }
+
+    .btn-3:active {
+        background: #f58500;
+        top: 2px;
+    }
+
+    .btn-3:disabled, btn-3[disabled] {
+        background: #848484;
+        top: 2px;
+    }
+
+    .btn-3:before {
+        position: absolute;
+        height: 100%;
+        left: 0;
+        top: 0;
+        line-height: 2;
+        font-size: 140%;
+        width: 17%;
+    }
+
+/* Button 3d */
+.btn-3d {
+    padding: 10px 10px 10px 50px;
+    border-radius: 10px;
+}
+
+    .btn-3d:before {
+        background: #fff;
+        color: #fcad26;
+        z-index: 2;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .btn-3d:after {
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        z-index: 1;
+        left: 17%;
+        top: 50%;
+        margin: -10px 0 0 -10px;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .btn-3d:active:before {
+        color: #f58500;
+    }
+
+    .btn-3d:disabled:before {
+        color: #848484;
+    }
+
+    .btn-3d:active {
+        top: 0;
+    }
+
+        .btn-3d:active:after {
+            left: 22%;
+        }
+
+/* Button 5 */
+.btn-5 {
+    background: #823aa0;
+    color: #fff;
+    height: 50px;
+    width: 95%;
+    line-height: 24px;
+    font-size: 16px;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 10px 10px 10px 10px;
+}
+
+    .btn-5:active {
+        background: #9053a9;
+        top: 2px;
+    }
+
+    .btn-5:disabled, btn-5[disabled] {
+        background: #848484;
+        top: 2px;
+    }
+
+    .btn-5 span {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        -webkit-transition: all 0.3s;
+        -webkit-backface-visibility: hidden;
+        -moz-transition: all 0.3s;
+        -moz-backface-visibility: hidden;
+        transition: all 0.3s;
+        backface-visibility: hidden;
+    }
+
+    .btn-5:before {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        line-height: 2.5;
+        font-size: 180%;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+    }
+
+    .btn-5:active:before {
+        color: #703b87;
+    }
+
+/* Button 5a */
+.btn-5a:hover span {
+    -webkit-transform: translateY(300%);
+    -moz-transform: translateY(300%);
+    -ms-transform: translateY(300%);
+    transform: translateY(300%);
+}
+
+.btn-5a:before {
+    left: 0;
+    top: -100%;
+}
+
+.btn-5a:hover:before {
+    top: -20%;
+}
+
+/* Button 6 */
+.btn-6 {
+    background: #823aa0;
+    color: #fff;
+    height: 40px;
+    width: 95%;
+    line-height: 24px;
+    font-size: 16px;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 10px 10px 10px 10px;
+}
+
+    .btn-6:active {
+        background: #9053a9;
+        top: 2px;
+    }
+
+    .btn-6:disabled, btn-5[disabled] {
+        background: #848484;
+        top: 2px;
+    }
+
+    .btn-6 span {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        -webkit-transition: all 0.3s;
+        -webkit-backface-visibility: hidden;
+        -moz-transition: all 0.3s;
+        -moz-backface-visibility: hidden;
+        transition: all 0.3s;
+        backface-visibility: hidden;
+    }
+
+    .btn-6:before {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        line-height: 2.5;
+        font-size: 180%;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+    }
+
+    .btn-6:active:before {
+        color: #703b87;
+    }
+
+/* Button 6a */
+.btn-6a:hover span {
+    -webkit-transform: translateY(300%);
+    -moz-transform: translateY(300%);
+    -ms-transform: translateY(300%);
+    transform: translateY(300%);
+}
+
+.btn-6a:before {
+    left: 0;
+    top: -150%;
+}
+
+.btn-6a:hover:before {
+    top: -40%;
+}
+
+/*NEW*/
+:root {
+    --bg: #3C465C;
+    --primary: #f19900;
+    --solid: #fff;
+    --btn-w: 14em;
+    --dot-w: calc(var(--btn-w)*.2);
+    --tr-X: calc(var(--btn-w) - var(--btn-w)*.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+    *:before, *:after {
+        box-sizing: border-box;
+    }
+
+
+.btn-atom {
+    background-color: #3C465C;
+    position: relative;
+    margin: 0 auto;
+    width: var(--btn-w);
+    color: var(--primary);
+    border: .15em solid var(--primary);
+    border-radius: 5em;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 0.85em;
+    line-height: 2em;
+    cursor: pointer;
+    width: 95%;
+}
+
+.dot {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: var(--dot-w);
+    height: 100%;
+    border-radius: 100%;
+    -webkit-transition: all 300ms ease;
+    transition: all 300ms ease;
+    display: none;
+}
+
+    .dot:after {
+        content: '';
+        position: absolute;
+        left: calc(50% - .4em);
+        top: -.4em;
+        height: .8em;
+        width: .8em;
+        background: var(--primary);
+        border-radius: 2em;
+        border: .15em solid var(--solid);
+        box-shadow: 0 0 .7em var(--solid), 0 0 2em var(--primary);
+    }
+
+.btn-atom:hover .dot,
+.btn-atom:focus .dot {
+    -webkit-animation: atom 2s infinite linear;
+    animation: atom 2s infinite linear;
+    display: block;
+}
+
+@-webkit-keyframes atom {
+    0% {
+        -webkit-transform: translateX(0) rotate(0);
+        transform: translateX(0) rotate(0);
+    }
+
+    30% {
+        -webkit-transform: translateX(var(--tr-X)) rotate(0);
+        transform: translateX(var(--tr-X)) rotate(0);
+    }
+
+    50% {
+        -webkit-transform: translateX(var(--tr-X)) rotate(180deg);
+        transform: translateX(var(--tr-X)) rotate(180deg);
+    }
+
+    80% {
+        -webkit-transform: translateX(0) rotate(180deg);
+        transform: translateX(0) rotate(180deg);
+    }
+
+    100% {
+        -webkit-transform: translateX(0) rotate(360deg);
+        transform: translateX(0) rotate(360deg);
+    }
+}
+
+@keyframes atom {
+    0% {
+        -webkit-transform: translateX(0) rotate(0);
+        transform: translateX(0) rotate(0);
+    }
+
+    30% {
+        -webkit-transform: translateX(var(--tr-X)) rotate(0);
+        transform: translateX(var(--tr-X)) rotate(0);
+    }
+
+    50% {
+        -webkit-transform: translateX(var(--tr-X)) rotate(180deg);
+        transform: translateX(var(--tr-X)) rotate(180deg);
+    }
+
+    80% {
+        -webkit-transform: translateX(0) rotate(180deg);
+        transform: translateX(0) rotate(180deg);
+    }
+
+    100% {
+        -webkit-transform: translateX(0) rotate(360deg);
+        transform: translateX(0) rotate(360deg);
+    }
+}
+
+.btn-display {
+    background-color: Transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    color: White;
+    width: 100%;
+    height: 5vh;
+}
+
+/*Inputs*/
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-left: 1%;
+    padding-top: 1%;
+}
+
+​
+input[type="text"] {
+    display: inline-block;
+    margin: 0;
+    width: 98%;
+    font-family: sans-serif;
+    font-size: 18px;
+    appearance: none;
+    box-shadow: none;
+    border-radius: none;
+}
+
+input[type="text"]:focus {
+    outline: none;
+}
+
+.style-1 input[type="text"] {
+    padding: 10px;
+    right-padding: 0px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+
+    .style-1 input[type="text"]:focus,
+    .style-1 input[type="text"].focus {
+        border: solid 1px #707070;
+        box-shadow: 0 0 5px 1px #969696;
+        width: 50%;
+    }
+
+.style-2 input[type="text"] {
+    padding: 10px;
+    right-padding: 0px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+
+    .style-2 input[type="text"]:focus, .style-2 input[type="text"].focus {
+        border: solid 1px #707070;
+        box-shadow: 0 0 5px 1px #969696;
+        width: 99.5%;
+    }
+
+label {
+    display: inline-block;
+    width: 50%;
+    text-align: left;
+}
+
+/* Info window styling */
+.gm-style-iw-chr{
+    /*display: none;*/
+    height: 10px !important;
+}
+
+.gm-style-iw-ch {
+    height: 0px !important;
+    padding: 0px !important;
+}
+
+.gm-style-iw-d {
+    padding-top: 10px;
+}
+
+.gm-ui-hover-effect{
+    width: 36px;
+    height: 24px;
+    top: -10px;
+}
+
+
+
+
+.custom-info-window {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    padding: 12px;
+    max-width: 250px;
+    font-size: 12px;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.custom-close-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #666;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+    .custom-close-btn:hover {
+        background: #333;
+    }

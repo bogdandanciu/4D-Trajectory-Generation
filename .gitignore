@@ -1,0 +1,5 @@
+# Ignore Visual Studio working folder
+.vs/
+
+# Ignore specific config file
+/src/config/config.js
