@@ -1,6 +1,8 @@
 class FlightTrajectoryApp {
     constructor() {
         this.state = new ApplicationState();
+        this.state.userADEP = null;
+        this.state.userADES = null;
         this.flightCalculator = new FlightCalculator(FLIGHT_CONSTANTS);
         this.mapManager = new MapManager(this.state);
         this.uiManager = new UIManager(this.state);
@@ -58,26 +60,33 @@ class FlightTrajectoryApp {
             const element = document.getElementById(id);
             if (element) element.value = "";
         });
+        this.state.userADEP = null;
+        this.state.userADES = null;
     }
 
     updateFlightPath() {
-        const changed = (this.state.selection.prevDepartureIndex !== this.state.selection.departureIndex) || (this.state.selection.prevArrivalIndex !== this.state.selection.arrivalIndex);
+        // Use user-placed marker or airport marker for each role as set
+        let depPos = null, arrPos = null;
+        if (this.state.userADEP) {
+            depPos = this.state.userADEP.getPosition();
+        } else if (this.state.selection.departureIndex !== null && this.state.selection.departureIndex >= 0) {
+            depPos = this.state.markers[this.state.selection.departureIndex].getPosition();
+        }
+        if (this.state.userADES) {
+            arrPos = this.state.userADES.getPosition();
+        } else if (this.state.selection.arrivalIndex !== null && this.state.selection.arrivalIndex >= 0) {
+            arrPos = this.state.markers[this.state.selection.arrivalIndex].getPosition();
+        }
 
-        if (changed) {
-            this.state.selection.prevDepartureIndex = this.state.selection.departureIndex;
-            this.state.selection.prevArrivalIndex = this.state.selection.arrivalIndex;
-
-            this.state.route.path = [
-                this.state.markers[this.state.selection.departureIndex].getPosition(),
-                this.state.markers[this.state.selection.arrivalIndex].getPosition()
-            ];
-
+        if (depPos && arrPos) {
+            this.state.route.path = [depPos, arrPos];
             this.state.poly.setPath(this.state.route.path);
             this.state.geodesicPoly.setPath(this.state.route.path);
             this.animationManager.startAnimation(this.state.geodesicPoly);
+            this.state.flight.length_in_km = this.state.geodesicPoly.inKm();
+            // Always update green marker position and state
+            this.updateAircraftPosition();
         }
-
-        this.state.flight.length_in_km = this.state.geodesicPoly.inKm();
     }
 
     calculateFlightProfile() {
@@ -109,31 +118,65 @@ class FlightTrajectoryApp {
             return;
         }
 
-        // Calculate intermediate position using spherical interpolation
-        const position = this.calculateIntermediatePosition();
+        // Use the current route endpoints for interpolation
+        let depPos = null, arrPos = null;
+        if (this.state.userADEP) {
+            depPos = this.state.userADEP.getPosition();
+        } else if (this.state.selection.departureIndex !== null && this.state.selection.departureIndex >= 0) {
+            depPos = this.state.markers[this.state.selection.departureIndex].getPosition();
+        }
+        if (this.state.userADES) {
+            arrPos = this.state.userADES.getPosition();
+        } else if (this.state.selection.arrivalIndex !== null && this.state.selection.arrivalIndex >= 0) {
+            arrPos = this.state.markers[this.state.selection.arrivalIndex].getPosition();
+        }
+
+        // If both endpoints are set, interpolate position
+        let position = { lat: 45, lng: 23 };
+        if (depPos && arrPos) {
+            // Spherical interpolation between depPos and arrPos
+            const lat1 = depPos.lat();
+            const lon1 = depPos.lng();
+            const lat2 = arrPos.lat();
+            const lon2 = arrPos.lng();
+            const f = this.state.f;
+            // Convert to radians
+            const lat1r = lat1 * Math.PI / 180;
+            const lon1r = lon1 * Math.PI / 180;
+            const lat2r = lat2 * Math.PI / 180;
+            const lon2r = lon2 * Math.PI / 180;
+            const fi = Math.abs(lat1r - lat2r);
+            const lambda = Math.abs(lon1r - lon2r);
+            const a = Math.pow(Math.sin(fi / 2), 2) + Math.cos(lat1r) * Math.cos(lat2r) * Math.pow(Math.sin(lambda / 2), 2);
+            const c = 2 * Math.atan(Math.sqrt(a / (1 - a)));
+            const A = Math.sin((1 - f) * c) / Math.sin(c);
+            const B = Math.sin(f * c) / Math.sin(c);
+            const x = A * Math.cos(lat1r) * Math.cos(lon1r) + B * Math.cos(lat2r) * Math.cos(lon2r);
+            const y = A * Math.cos(lat1r) * Math.sin(lon1r) + B * Math.cos(lat2r) * Math.sin(lon2r);
+            const z = A * Math.sin(lat1r) + B * Math.sin(lat2r);
+            const fi_i = Math.atan(z / Math.sqrt(x * x + y * y)) * 180 / Math.PI;
+            const lambda_i = Math.atan2(y, x) * 180 / Math.PI;
+            position = { lat: fi_i, lng: lambda_i };
+            this.state.flight.fi_i = fi_i;
+            this.state.flight.lambda_i = lambda_i;
+        }
 
         // Update position instead of recreating marker to prevent blinking
         if (this.state.marker_lat_lon) {
-            // Just update the position instead of recreating the entire marker
             this.state.marker_lat_lon.setPosition({ lat: position.lat, lng: position.lng });
-            
-            // Ensure draggable property is always set correctly
             if (!this.state.marker_lat_lon.getDraggable()) {
                 this.state.marker_lat_lon.setDraggable(true);
             }
-            
-            // Only setup events once, but ensure drag event handler is always available
             if (!this.state.marker_lat_lon.eventsSetup) {
                 this.setupAircraftMarkerEvents(flightData);
                 this.state.marker_lat_lon.eventsSetup = true;
             }
         } else {
-            // Create marker only if it doesn't exist
             this.state.marker_lat_lon = new google.maps.Marker({
                 position: { lat: position.lat, lng: position.lng },
                 map: this.state.map,
                 draggable: true,
-                icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                icon: 'icons/green-dot.png'
             });
             this.setupAircraftMarkerEvents(flightData);
             this.state.marker_lat_lon.eventsSetup = true;
@@ -225,21 +268,24 @@ class FlightTrajectoryApp {
     }
 
     handleAircraftDrag() {
-        // Get the original airport positions in radians
-        const lat1 = airports[this.state.selection.departureIndex].latitude * Math.PI / 180;
-        const lon1 = airports[this.state.selection.departureIndex].longitude * Math.PI / 180;
-        const lat2 = airports[this.state.selection.arrivalIndex].latitude * Math.PI / 180;
-        const lon2 = airports[this.state.selection.arrivalIndex].longitude * Math.PI / 180;
+        // Get the current route endpoints (can be airport or red marker)
+        let depPos = null, arrPos = null;
+        if (this.state.userADEP) {
+            depPos = this.state.userADEP.getPosition();
+        } else if (this.state.selection.departureIndex !== null && this.state.selection.departureIndex >= 0) {
+            depPos = this.state.markers[this.state.selection.departureIndex].getPosition();
+        }
+        if (this.state.userADES) {
+            arrPos = this.state.userADES.getPosition();
+        } else if (this.state.selection.arrivalIndex !== null && this.state.selection.arrivalIndex >= 0) {
+            arrPos = this.state.markers[this.state.selection.arrivalIndex].getPosition();
+        }
+        if (!depPos || !arrPos) return;
 
         // Get current marker position
         const latm = this.state.marker_lat_lon.getPosition().lat();
         const lonm = this.state.marker_lat_lon.getPosition().lng();
 
-        // Use the correct current interpolated position for fi_i and lambda_i
-        const fi_i = this.state.flight.fi_i;
-        const lambda_i = this.state.flight.lambda_i;
-
-        // Calculate the projection of the marker onto the route
         // Convert all points to Cartesian coordinates
         function toCartesian(lat, lon) {
             lat = lat * Math.PI / 180;
@@ -250,8 +296,8 @@ class FlightTrajectoryApp {
                 z: Math.sin(lat)
             };
         }
-        const p1 = toCartesian(airports[this.state.selection.departureIndex].latitude, airports[this.state.selection.departureIndex].longitude);
-        const p2 = toCartesian(airports[this.state.selection.arrivalIndex].latitude, airports[this.state.selection.arrivalIndex].longitude);
+        const p1 = toCartesian(depPos.lat(), depPos.lng());
+        const p2 = toCartesian(arrPos.lat(), arrPos.lng());
         const pm = toCartesian(latm, lonm);
 
         // Vector from p1 to p2
@@ -319,6 +365,7 @@ class FlightTrajectoryApp {
                 }
             });
             this.state.visibleAirportIndexes.clear();
+            this.mapManager.updateVisibleAirports();
         } else {
             // Show airports based on current bounds
             this.mapManager.updateVisibleAirports();
@@ -333,6 +380,9 @@ let app;
 function loadAirports() {
     app = new FlightTrajectoryApp();
     app.initialize();
+
+    document.getElementById("ADEP").disabled = true;
+    document.getElementById("ADES").disabled = false;
 }
 
 function ChangeADEP() {

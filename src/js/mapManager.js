@@ -27,6 +27,8 @@ class MapManager {
         this.eventManager = new EventManager();
         this.markerCache = new Map();
         this.debounceTimers = new Map();
+        this.currentSelectedMarker = null;
+        this.markerCluster = null; // MarkerClusterer instance
     }
 
     initializeMap() {
@@ -49,7 +51,7 @@ class MapManager {
         this.state.marker_lat_lon = new google.maps.Marker({
             position: { lat: 45, lng: 23 },
             map: this.state.map,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            icon: 'icons/green-dot.png'
         });
     }
 
@@ -88,6 +90,12 @@ class MapManager {
             this.state.markers = [];
         }
 
+        // Remove previous cluster if exists
+        if (this.markerCluster) {
+            this.markerCluster.clearMarkers();
+            this.markerCluster = null;
+        }
+
         const processBatch = () => {
             const end = Math.min(processed + batchSize, totalAirports);
             for (let i = processed; i < end; i++) {
@@ -100,6 +108,13 @@ class MapManager {
             if (processed < totalAirports) {
                 requestAnimationFrame(processBatch);
             } else {
+                // Initialize MarkerClusterer after all markers are created
+                this.markerCluster = new MarkerClusterer(this.state.map, this.state.markers, {
+                    imagePath: 'icons/m',
+                    gridSize: 80,
+                    maxZoom: 5,
+                    minimumClusterSize: 2
+                });
                 this.updateVisibleAirports();
             }
         };
@@ -112,15 +127,19 @@ class MapManager {
                 lat: parseFloat(airport.latitude),
                 lng: parseFloat(airport.longitude)
             },
-            icon: "black-triangle.png"
+            icon: "icons/black-triangle.png"
         });
 
-        const index = airports.findIndex(a => a.iata === airport.iata);
+        const index = airports.findIndex(a => (a.iata !== null && a.iata === airport.iata) || a.icao === airport.icao);
         if (index !== -1) {
             this.setupAirportMarkerEvents(marker, index);
         }
 
         return marker;
+    }
+
+    updateMarkerIcon(marker, selected) {
+        marker.setIcon(selected ? "icons/selected-triangle.png" : "icons/black-triangle.png");
     }
 
     debounce(func, wait) {
@@ -150,8 +169,8 @@ class MapManager {
         const content = `
         <div class="airport-info">
             <div>
-                <strong>${airports[index].icao}</strong>, 
-                ${airports[index].iata ? `<strong>${airports[index].iata}</strong>` : ``} 
+                <strong>${airports[index].icao}</strong> 
+                ${airports[index].iata ? `, <strong>${airports[index].iata}</strong>` : ``} 
                 - ${airports[index].name}</div>
             <div style="font-size: 11px; color: #666; margin-top: 4px;">
                 ${airports[index].latitude}, ${airports[index].longitude}
@@ -164,7 +183,7 @@ class MapManager {
         this.state.contentMarker[index] = content;
         this.state.infowindows[index] = new google.maps.InfoWindow({
             content: content,
-            maxWidth: 250 // Limit the width
+            maxWidth: 250
         });
 
         google.maps.event.addListener(marker, 'mouseover', () => {
@@ -176,10 +195,23 @@ class MapManager {
         });
 
         google.maps.event.addListener(marker, 'click', () => {
+            // Reset previous marker's icon if it exists and is different from current marker
+            if (this.currentSelectedMarker && this.currentSelectedMarker !== marker) {
+                this.updateMarkerIcon(this.currentSelectedMarker, false);
+            }
+
+            // Update current marker's icon
+            this.updateMarkerIcon(marker, true);
+            this.currentSelectedMarker = marker;
+
             if (this.state.set === 1) {
+                // Set as ADEP (airport)
                 this.state.selection.departureIndex = index;
+                this.state.userADEP = null; // Clear any user marker for ADEP
             } else {
+                // Set as ADES (airport)
                 this.state.selection.arrivalIndex = index;
+                this.state.userADES = null; // Clear any user marker for ADES
             }
             // Trigger update through event system
             this.notifyStateChange();
@@ -218,36 +250,48 @@ class MapManager {
         const bounds = this.state.map.getBounds();
         if (!bounds) return;
 
-        // Clear the visible set first
         this.state.visibleAirportIndexes.clear();
 
         if (this.state.airportsHidden) {
-            // If airports are hidden by user, don't show any
-            for (let i = 0; i < this.state.markers.length; i++) {
-                if (this.state.markers[i]) {
-                    this.state.markers[i].setMap(null);
+            // Hide all airport markers and clear cluster
+            if (this.state.markers) {
+                for (let i = 0; i < this.state.markers.length; i++) {
+                    if (this.state.markers[i]) {
+                        this.state.markers[i].setMap(null);
+                    }
                 }
+            }
+            if (this.markerCluster) {
+                this.markerCluster.clearMarkers();
+                this.markerCluster.repaint(); // Force update
             }
             return;
         }
 
         // Show/hide airports based on bounds
+        const visibleMarkers = [];
         for (let i = 0; i < airports.length; i++) {
             if (this.state.markers[i]) {
                 const lat = parseFloat(airports[i].latitude);
                 const lng = parseFloat(airports[i].longitude);
                 const latLng = new google.maps.LatLng(lat, lng);
                 const shouldBeVisible = bounds.contains(latLng);
-                
                 if (shouldBeVisible) {
-                    // Show marker if it should be visible
                     this.state.markers[i].setMap(this.state.map);
+                    visibleMarkers.push(this.state.markers[i]);
                     this.state.visibleAirportIndexes.add(i);
                 } else {
-                    // Hide marker if it shouldn't be visible
                     this.state.markers[i].setMap(null);
                 }
             }
+        }
+        // Update clusterer with only visible markers
+        if (this.markerCluster) {
+            // Make sure all visible markers are on the map before clustering
+            visibleMarkers.forEach(m => m.setMap(this.state.map));
+            this.markerCluster.clearMarkers();
+            this.markerCluster.addMarkers(visibleMarkers);
+            this.markerCluster.repaint(); // Force update
         }
     }
 
@@ -263,24 +307,54 @@ class MapManager {
         const marker = new google.maps.Marker({
             position: location,
             map: this.state.map,
+            icon: 'icons/red-dot.png',
         });
+        marker.isUserPlaced = true; // Custom property to identify user-placed markers
 
         const infowindow = new google.maps.InfoWindow({
             content: `Latitude: ${location.lat()}<br>Longitude: ${location.lng()}`
         });
         infowindow.open(this.state.map, marker);
 
-        this.state.markers.coordinates[this.state.markers.count] = { lat: location.lat(), lng: location.lng() };
+        this.state.markers.coordinates[this.state.markers.count] = { lat: location.lat(), lng: location.lng(), marker };
         this.state.markers.count++;
 
         this.updateMarkerText();
-        this.addClickEvent(marker);
+        this.addUserPlacedMarkerEvents(marker);
     }
 
-    addClickEvent(marker) {
+    addUserPlacedMarkerEvents(marker) {
+        let clickTimeout = null;
+        // Single click: set as ADEP or ADES, but only if not followed by double click
+        google.maps.event.addListener(marker, 'click', () => {
+            if (clickTimeout) return; // Prevent multiple timers
+            clickTimeout = setTimeout(() => {
+                // If a selected airport marker exists for this role, reset its icon
+                if (this.state.set === 1) {
+                    if (this.state.selection.departureIndex !== null && this.state.selection.departureIndex >= 0 && this.state.markers[this.state.selection.departureIndex]) {
+                        this.updateMarkerIcon(this.state.markers[this.state.selection.departureIndex], false);
+                    }
+                    this.state.selection.departureIndex = null;
+                    this.state.userADEP = marker;
+                } else {
+                    if (this.state.selection.arrivalIndex !== null && this.state.selection.arrivalIndex >= 0 && this.state.markers[this.state.selection.arrivalIndex]) {
+                        this.updateMarkerIcon(this.state.markers[this.state.selection.arrivalIndex], false);
+                    }
+                    this.state.selection.arrivalIndex = null;
+                    this.state.userADES = marker;
+                }
+                this.notifyStateChange();
+                clickTimeout = null;
+            }, 250); // Wait to see if dblclick happens
+        });
+        // Double click: remove marker and cancel single click
         google.maps.event.addListener(marker, 'dblclick', () => {
+            if (clickTimeout) {
+                clearTimeout(clickTimeout);
+                clickTimeout = null;
+            }
             marker.setMap(null);
-            // Remove from state.markers.coordinates and update count
+            // Remove from coordinates array and update count
             if (this.state && this.state.markers && Array.isArray(this.state.markers.coordinates)) {
                 const pos = marker.getPosition();
                 const lat = typeof pos.lat === 'function' ? pos.lat() : pos.lat;
@@ -293,7 +367,11 @@ class MapManager {
                     }
                 }
             }
+            // If this marker was set as userADEP or userADES, clear it
+            if (this.state.userADEP === marker) this.state.userADEP = null;
+            if (this.state.userADES === marker) this.state.userADES = null;
             this.updateMarkerText();
+            this.notifyStateChange();
         });
     }
 

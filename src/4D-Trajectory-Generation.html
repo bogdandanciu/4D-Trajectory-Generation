@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="libs/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="css/styles.css" type="text/css">
     <link rel="icon" href="airplane.ico">
     <script src="plotly-latest.min.js"></script>
@@ -10,10 +10,8 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <!-- Create map-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="jquery.csv.js"></script>
+    <script src="libs/jquery.min.js"></script>
+    <script src="libs/jquery-2.1.1.min.js"></script>
 
     <script src="./config/config.js"></script>
     <script src="./data/airports.js"></script>
@@ -26,6 +24,8 @@
     <script src="js/plotManager.js"></script>
     <script src="js/animationManager.js"></script>
     <script src="js/main.js"></script>
+    <!-- MarkerClusterer CDN -->
+    <script src="libs/index.min.js"></script>
     <script>
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=geometry&callback=loadAirports`;
@@ -40,7 +40,8 @@
             <button id="ADES" type="button" onclick="ChangeADES()" value="Change ADES" class="btn btn-3 btn-3d icon-cog"><span>Set ADES</span></button><br />
 
             <div class="btn-atom">
-                <input id="display_airports" type="button" onclick="display_airports()" value="Hide airports" class="btn-display"><!--<span>Hide Airports</span>--></button><br />
+                <input id="display_airports" type="button" onclick="display_airports()" value="Hide airports" class="btn-display">
+                <br />
                 <div class="dot"></div>
             </div>
             <br />
@@ -50,12 +51,12 @@
                 <button id="change_f" type="button" onclick="change_f()" value="Set Point" class="btn btn-6 btn-6a icon-loc"><span>Set Point</span></button>
                 <br />
 
-                <input id="dep_time" class="leftInputStyle" type="text" placeholder="July 21, 1983 01:15:00" />
+                <input id="dep_time" class="leftInputStyle" type="text" placeholder="01:15:00 21/06/1990" />
                 <br />
                 <button id="change_time_dep" type="button" onclick="change_time_dep()" value="Set Departure Time" class="btn btn-5 btn-5a icon-clock"><span>Set Departure<br />Time</span></button>
                 <br />
 
-                <input id="arr_time" class="leftInputStyle" type="text" placeholder="Jun 21, 1990 15:00:00" />
+                <input id="arr_time" class="leftInputStyle" type="text" placeholder="15:00:00 21/06/1990" />
                 <br />
                 <button id="change_time_arr" type="button" onclick="change_time_arr()" value="Set Arrival Time" class="btn btn-5 btn-5a icon-clock"><span>Set Arrival<br />Time</span></button>
                 <br />
@@ -111,7 +112,7 @@
                     <div class="block"><label>Speed: </label><input type="text" id="speed" class="focus" readonly="readonly" /><br /></div>
                 </div>
                 <div class="input-list style-2 clearfix">
-                    <div class="block"><input type="text" id="roc" class="focus" readonly="readonly" /><br /></div>
+                    <div class="block"><label>ROC/ROD:</label><input type="text" id="roc" class="focus" readonly="readonly" /><br /></div>
                 </div>
                 <div class="input-list style-1 clearfix">
                     <div class="block"><label>FL: </label><input type="text" id="flight_level" class="focus" readonly="readonly" /><br /></div>

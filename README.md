@@ -16,6 +16,20 @@ The vertical profile is generated using the performance model of an Airbus A320.
 
 
 ## How to use it 
+First you must have a google maps api key, and place it in src/config/config.js.
+If the file does not exist you can create it.
+Inside you must have the following code, just like in config.example.js.
+```javascript
+const GOOGLE_MAPS_KEY = "YOUR_API_KEY"; //replace YOUR_API_KEY with your actual API key
+```
+The api key must have "Maps JavaScript API" enabled.
+
+To do so, go to https://console.cloud.google.com/.
+Then scroll down and under "Quick Access" select "APIs & Services".
+Then from the left sidebar select "Enabled APIs & services".
+Then click on "+ Enable APIs and services" at the top.
+From there search "Maps JavaScript API" and enable it.
+Or click on "Manage", search for "Maps JavaScript API" again and click the enable button.
 
 ### Inputs 
 

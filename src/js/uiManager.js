@@ -64,7 +64,7 @@ class UIManager {
                 this.updateElement("dep_time", depTimeString);
             }
             if (timeData.current && (this.state.time.departure || this.state.time.arrival)) {
-                const clockString = this.formatClockTime(timeData.current);
+                const clockString = this.formatTimeForDisplay(timeData.current);
                 this.updateElement("clock", clockString);
             }
         }
@@ -75,8 +75,18 @@ class UIManager {
         return dateObj.toLocaleString();
     }
 
-    formatClockTime(dateObj) {
+    formatTimeForDisplay(dateObj) {
         if (!(dateObj instanceof Date)) return "";
-        return dateObj.toLocaleString();
+
+        const pad = n => String(n).padStart(2, "0");
+
+        const hours = pad(dateObj.getHours());
+        const minutes = pad(dateObj.getMinutes());
+        const seconds = pad(dateObj.getSeconds());
+        const day = pad(dateObj.getDate());
+        const month = pad(dateObj.getMonth() + 1); // Months are 0-based
+        const year = dateObj.getFullYear();
+
+        return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
     }
 }

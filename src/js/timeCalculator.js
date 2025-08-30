@@ -43,16 +43,4 @@ class TimeCalculator {
         // Subtract time_passed (in minutes) from arrival
         return new Date(this.state.time.arrival.getTime() - flightData.time_passed * 60000);
     }
-
-    // Format time for display
-    formatTimeForDisplay(dateObj) {
-        if (!(dateObj instanceof Date)) return "";
-        return dateObj.toLocaleString();
-    }
-
-    // Format clock time for current position
-    formatClockTime(dateObj) {
-        if (!(dateObj instanceof Date)) return "";
-        return dateObj.toLocaleString();
-    }
 }

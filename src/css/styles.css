@@ -1,8 +1,8 @@
 ﻿#wrapper {
     width: 98%;
-    height: 95vh;
+    height: 97vh;
     border: 1px solid black;
-    overflow: auto;
+    overflow: hidden;
     position: absolute;
 }
 
@@ -16,7 +16,7 @@
     width: 15%;
     float: left;
     background-color: #95a5a6;
-    height: 89.7vh;
+    height: 100vh;
     white-space: nowrap;
 }
 
@@ -30,7 +30,7 @@
     width: 15%;
     float: left;
     background-color: #95a5a6;
-    height: 89.7vh;
+    height: 100vh;
 }
 
 #googleMap {
@@ -42,7 +42,7 @@
 
 #tester {
     width: 100%;
-    height: 34.7vh;
+    height: 42vh;
     border: 1px solid green;
     overflow: hidden;
 }
@@ -388,6 +388,7 @@ div#header {
     -webkit-transition: all 300ms ease;
     transition: all 300ms ease;
     display: none;
+    pointer-events: none;
 }
 
     .dot:after {
@@ -525,7 +526,6 @@ input[type="text"]:focus {
     .style-2 input[type="text"]:focus, .style-2 input[type="text"].focus {
         border: solid 1px #707070;
         box-shadow: 0 0 5px 1px #969696;
-        width: 99.5%;
     }
 
 label {
