@@ -513,7 +513,7 @@ input[type="text"]:focus {
     .style-1 input[type="text"].focus {
         border: solid 1px #707070;
         box-shadow: 0 0 5px 1px #969696;
-        width: 50%;
+        width: 60%;
     }
 
 .style-2 input[type="text"] {
@@ -530,8 +530,10 @@ input[type="text"]:focus {
 
 label {
     display: inline-block;
-    width: 50%;
+    width: 40%;
     text-align: left;
+    font-size: 14px;
+    font-weight: bolder;
 }
 
 /* Info window styling */

@@ -7,12 +7,12 @@ Tool for generation and visualization of 4D trajectories (latitude, longitude, a
 The horizontal part of the trajectory is generated as an orthodrome between the two airports. An orthodrome is the shortest distance between two points on a sphere, also known as a Great Circle.
 
 
-![orthodrome](https://user-images.githubusercontent.com/28689295/38273040-9ba684ca-3793-11e8-99bc-c54885818317.png)
+![orthodrome](imgs/img-tut-1.png)
 
 
 The vertical profile is generated using the performance model of an Airbus A320. Using the orthodromic distance between the chosen airports and assuming a minimum cruise time of 15 minutes an optimal cruise level is then determined together with the variable speeds and vertical rates of change for each leg of the flight profile.   
 
-![a320 performance](https://user-images.githubusercontent.com/28689295/38273978-0cc2c338-3796-11e8-8fcc-b4c063eb12ac.JPG)
+![a320 performance](imgs/img-tut-2.png)
 
 
 ## How to use it 
@@ -33,7 +33,7 @@ Or click on "Manage", search for "Maps JavaScript API" again and click the enabl
 
 ### Inputs 
 
-![inputs](https://user-images.githubusercontent.com/28689295/38274231-d58253f6-3796-11e8-8220-d5b5ae4662aa.png)
+![inputs](imgs/img-app-1.png)
 
 * SET ADEP - set the departure airport when the button is active by clicking on one of the triangles on the map representing an airport
 * SET ADES - set the arrival airport when the button is active by clicking on one of the triangles on the map representing an airport
@@ -44,7 +44,7 @@ Or click on "Manage", search for "Maps JavaScript API" again and click the enabl
 
 ### Results  
 
-![outputs](https://user-images.githubusercontent.com/28689295/38275003-2485cabc-3799-11e8-8501-55c08e4de101.png)
+![outputs](imgs/img-app-2.png)
 
 * LAT - latitude of the selected point along the trajectory 
 * LONG - longitude of the selected point along the trajectory

@@ -336,17 +336,25 @@ class FlightTrajectoryApp {
     }
 
     setDepartureTime(dateString) {
-        const date = new Date(dateString);
+        const date = this.parseCustomDate(dateString);
         this.state.time.departure = date;
         this.state.time.arrival = null;
         this.update();
     }
 
     setArrivalTime(dateString) {
-        const date = new Date(dateString);
+        const date = this.parseCustomDate(dateString);
         this.state.time.arrival = date;
         this.state.time.departure = null;
         this.update();
+    }
+
+    parseCustomDate(str) {
+        const [time, date] = str.split(" ");
+        const [hh, mm, ss] = time.split(":").map(Number);
+        const [day, month, year] = date.split("/").map(Number);
+
+        return new Date(year, month - 1, day, hh, mm, ss);
     }
 
     toggleAirportDisplay() {
